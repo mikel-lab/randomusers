@@ -7,13 +7,13 @@
 
 import Foundation
 
-// Root response structure
+// generic structure
 struct UserResponse: Codable {
 	let results: [UserDTO]
 	let info: InfoDTO
 }
 
-// Main user DTO
+// user DTO
 struct UserDTO: Codable {
 	let gender: String
 	let name: NameDTO
@@ -41,7 +41,6 @@ struct LocationDTO: Codable {
 	let city: String
 	let state: String
 	let country: String
-	let postcode: String
 	let coordinates: CoordinatesDTO
 	let timezone: TimezoneDTO
 }
@@ -78,7 +77,7 @@ struct DateInfoDTO: Codable {
 
 struct IDDTO: Codable {
 	let name: String
-	let value: String
+	let value: String?
 }
 
 struct PictureDTO: Codable {
