@@ -14,15 +14,15 @@ enum UserServiceError: Error {
 }
 
 protocol UserServiceProtocol {
-	func fetchUsers() async throws -> [UserModel]
+	func fetchUsers(page: Int) async throws -> [UserModel]
 }
 
 class UserService: UserServiceProtocol {
 	private let baseURL = "https://api.randomuser.me"
-	private let resultsCount = 40
+	private let resultsCount = 20
 	
-	func fetchUsers() async throws -> [UserModel] {
-		guard let url = URL(string: "\(baseURL)/?results=\(resultsCount)") else {
+	func fetchUsers(page: Int) async throws -> [UserModel] {
+		guard let url = URL(string: "\(baseURL)/?page=\(page)&results=\(resultsCount)") else {
 			throw UserServiceError.invalidURL
 		}
 		
@@ -42,7 +42,7 @@ class UserService: UserServiceProtocol {
 			do {
 				let response = try JSONDecoder().decode(UserResponse.self, from: data)
 				return response.results.map(UserModel.init)
-			} catch {
+			} catch let error as DecodingError {
 				print("Decoding error: \(error)")
 				throw UserServiceError.decodingError(error)
 			}

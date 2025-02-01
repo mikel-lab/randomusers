@@ -22,7 +22,15 @@ struct UserListView: View {
 							ForEach(viewModel.users, id: \.email) { user in
 								UserRowView(user: user)
 									.padding(.horizontal)
+									.task {
+										await viewModel.loadMoreIfNeeded(currentUser: user)
+									}
 								Divider()
+							}
+							
+							if !viewModel.users.isEmpty {
+								ProgressView()
+									.padding()
 							}
 						}
 					}
