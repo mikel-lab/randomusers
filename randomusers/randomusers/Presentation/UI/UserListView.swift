@@ -20,10 +20,11 @@ struct UserListView: View {
 					ScrollView {
 						LazyVStack(spacing: 16) {
 							ForEach(viewModel.users, id: \.email) { user in
-								Text("\(user.name) \(user.surname)")
+								UserRowView(user: user)
+									.padding(.horizontal)
+								Divider()
 							}
 						}
-						.padding()
 					}
 				}
 			}
