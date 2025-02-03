@@ -12,14 +12,24 @@ class UserListViewModel: ObservableObject {
 	@Published var users: [UserModel] = []
 	@Published var isLoading = false
 	@Published var error: Error?
-	
+	@Published var searchText = "" 
+
 	private let userService: UserServiceProtocol
 	private var currentPage = 1
 	private var isFetching = false
-	private var emailSet: Set<String> = [] // Track unique emails
-	
+	private var emailSet: Set<String> = [] 
+	private var allUsers: [UserModel] = [] 
+
 	init(userService: UserServiceProtocol = UserService()) {
 		self.userService = userService
+	}
+	
+	var filteredUsers: [UserModel] {
+		guard !searchText.isEmpty else { return allUsers }
+		return allUsers.filter { user in
+			user.name.localizedCaseInsensitiveContains(searchText) ||
+			user.email.localizedCaseInsensitiveContains(searchText)
+		}
 	}
 	
 	func fetchUsers() async {
@@ -41,7 +51,8 @@ class UserListViewModel: ObservableObject {
 			uniqueNewUsers.forEach { user in
 				emailSet.insert(user.email)
 			}
-			users.append(contentsOf: uniqueNewUsers)
+			allUsers.append(contentsOf: uniqueNewUsers)
+			users = filteredUsers 
 			
 			currentPage += 1
 		} catch {
@@ -58,5 +69,10 @@ class UserListViewModel: ObservableObject {
 		   userIndex == thresholdIndex {
 			await fetchUsers()
 		}
+	}
+	
+	// Add search functionality
+	func updateSearchResults() {
+		users = filteredUsers
 	}
 }

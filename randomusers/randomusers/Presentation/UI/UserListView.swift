@@ -17,20 +17,30 @@ struct UserListView: View {
 					ProgressView()
 						.scaleEffect(1.5)
 				} else {
-					ScrollView {
-						LazyVStack(spacing: 16) {
-							ForEach(viewModel.users, id: \.email) { user in
-								UserRowView(user: user)
-									.padding(.horizontal)
-									.task {
-										await viewModel.loadMoreIfNeeded(currentUser: user)
-									}
-								Divider()
+					VStack {
+						// Add search bar
+						TextField("Search by name or email", text: $viewModel.searchText)
+							.textFieldStyle(RoundedBorderTextFieldStyle())
+							.padding()
+							.onChange(of: viewModel.searchText) { _ in
+								viewModel.updateSearchResults()
 							}
-							
-							if !viewModel.users.isEmpty {
-								ProgressView()
-									.padding()
+						
+						ScrollView {
+							LazyVStack(spacing: 16) {
+								ForEach(viewModel.users, id: \.email) { user in
+									UserRowView(user: user)
+										.padding(.horizontal)
+										.task {
+											await viewModel.loadMoreIfNeeded(currentUser: user)
+										}
+									Divider()
+								}
+								
+								if !viewModel.users.isEmpty {
+									ProgressView()
+										.padding()
+								}
 							}
 						}
 					}
