@@ -29,11 +29,14 @@ struct UserListView: View {
 						ScrollView {
 							LazyVStack(spacing: 16) {
 								ForEach(viewModel.users, id: \.email) { user in
-									UserRowView(user: user)
-										.padding(.horizontal)
-										.task {
-											await viewModel.loadMoreIfNeeded(currentUser: user)
-										}
+									NavigationLink(destination: UserDetailView(user: user)) {
+										UserRowView(user: user)
+											.padding(.horizontal)
+									}
+									.buttonStyle(PlainButtonStyle())
+									.task {
+										await viewModel.loadMoreIfNeeded(currentUser: user)
+									}
 									Divider()
 								}
 								
