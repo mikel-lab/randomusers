@@ -15,13 +15,16 @@ class UserListViewModel: ObservableObject {
 	@Published var searchText = ""
 
 	private let userService: UserServiceProtocol
+	private let cloudKitService: CloudKitServiceProtocol
 	private var currentPage = 1
 	private var isFetching = false
 	private var emailSet: Set<String> = []
 	private var allUsers: [UserModel] = []
 
-	init(userService: UserServiceProtocol = UserService()) {
+	init(userService: UserServiceProtocol = UserService(),
+		 cloudKitService: CloudKitServiceProtocol = CloudKitService()) {
 		self.userService = userService
+		self.cloudKitService = cloudKitService
 	}
 	
 	var filteredUsers: [UserModel] {
@@ -76,6 +79,16 @@ class UserListViewModel: ObservableObject {
 	}
 	
 	func deleteUser(_ user: UserModel) {
-
+		Task {
+			do {
+				try await cloudKitService.saveRemovedUser(user)
+				if let index = allUsers.firstIndex(where: { $0.email == user.email }) {
+					allUsers.remove(at: index)
+					users = filteredUsers
+				}
+			} catch {
+				self.error = error
+			}
+		}
 	}
 }
