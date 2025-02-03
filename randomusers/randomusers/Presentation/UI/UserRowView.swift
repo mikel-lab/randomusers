@@ -9,9 +9,10 @@ import SwiftUI
 
 struct UserRowView: View {
 	let user: UserModel
+	var onDelete: () -> Void
 	
 	var body: some View {
-		VStack(alignment: .leading, spacing: 8) {
+		VStack(alignment: .leading, spacing: 14) {
 			HStack(spacing: 12) {
 				AsyncImage(url: URL(string: user.picture)) { image in
 					image
@@ -30,7 +31,15 @@ struct UserRowView: View {
 						.font(.subheadline)
 				}
 				
-				Spacer() 
+				Spacer()
+				
+				Button(action: onDelete) {
+					Image(systemName: "trash")
+						.font(.system(size: 14))
+						.foregroundColor(.white)
+						.padding(6)
+						.background(Circle().fill(Color.red))
+				}
 			}
 			
 			VStack(alignment: .leading, spacing: 4) {
@@ -52,6 +61,6 @@ struct UserRowView: View {
 			}
 		}
 		.padding(.vertical, 8)
-		.frame(maxWidth: .infinity, alignment: .leading) 
+		.frame(maxWidth: .infinity, alignment: .leading)
 	}
 }

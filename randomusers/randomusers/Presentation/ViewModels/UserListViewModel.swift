@@ -12,13 +12,13 @@ class UserListViewModel: ObservableObject {
 	@Published var users: [UserModel] = []
 	@Published var isLoading = false
 	@Published var error: Error?
-	@Published var searchText = "" 
+	@Published var searchText = ""
 
 	private let userService: UserServiceProtocol
 	private var currentPage = 1
 	private var isFetching = false
-	private var emailSet: Set<String> = [] 
-	private var allUsers: [UserModel] = [] 
+	private var emailSet: Set<String> = []
+	private var allUsers: [UserModel] = []
 
 	init(userService: UserServiceProtocol = UserService()) {
 		self.userService = userService
@@ -52,7 +52,7 @@ class UserListViewModel: ObservableObject {
 				emailSet.insert(user.email)
 			}
 			allUsers.append(contentsOf: uniqueNewUsers)
-			users = filteredUsers 
+			users = filteredUsers
 			
 			currentPage += 1
 		} catch {
@@ -71,8 +71,11 @@ class UserListViewModel: ObservableObject {
 		}
 	}
 	
-	// Add search functionality
 	func updateSearchResults() {
 		users = filteredUsers
+	}
+	
+	func deleteUser(_ user: UserModel) {
+
 	}
 }

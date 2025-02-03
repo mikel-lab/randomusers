@@ -29,15 +29,18 @@ struct UserListView: View {
 						ScrollView {
 							LazyVStack(spacing: 16) {
 								ForEach(viewModel.users, id: \.email) { user in
-									NavigationLink(destination: UserDetailView(user: user)) {
-										UserRowView(user: user)
+									ZStack {
+										NavigationLink(destination: UserDetailView(user: user)) {
+											UserRowView(user: user) {
+												viewModel.deleteUser(user)
+											}
 											.padding(.horizontal)
+										}
+										.buttonStyle(PlainButtonStyle())
+										.task {
+											await viewModel.loadMoreIfNeeded(currentUser: user)
+										}
 									}
-									.buttonStyle(PlainButtonStyle())
-									.task {
-										await viewModel.loadMoreIfNeeded(currentUser: user)
-									}
-									Divider()
 								}
 								
 								if !viewModel.users.isEmpty {
