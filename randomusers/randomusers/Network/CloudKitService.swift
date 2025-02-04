@@ -16,6 +16,7 @@ enum CloudKitError: Error {
 
 protocol CloudKitServiceProtocol {
     func saveRemovedUser(_ user: UserModel) async throws
+	func fetchRemovedUsers() async throws -> [UserModel]
 }
 
 class CloudKitService: CloudKitServiceProtocol {
@@ -61,4 +62,29 @@ class CloudKitService: CloudKitServiceProtocol {
             throw CloudKitError.saveFailed
         }
     }
+	
+
+	func fetchRemovedUsers() async throws -> [UserModel] {
+		let publicDB = CKContainer.default().publicCloudDatabase
+		let query = CKQuery(recordType: "RemovedRandomUser", predicate: NSPredicate(value: true))
+		let (results, _) = try await publicDB.records(matching: query)
+		
+		var removedUsers: [UserModel] = []
+		
+		// Iteramos sobre cada resultado, que es una tupla (CKRecord.ID, Result<CKRecord, Error>)
+		for (_, result) in results {
+			switch result {
+			case .success(let record):
+				if let user = UserModel(record: record) {
+					removedUsers.append(user)
+				} else {
+					print("Error: Campos faltantes en el registro \(record.recordID)")
+				}
+			case .failure(let error):
+				print("Error recuperando el registro: \(error.localizedDescription)")
+			}
+		}
+		
+		return removedUsers
+	}
 }

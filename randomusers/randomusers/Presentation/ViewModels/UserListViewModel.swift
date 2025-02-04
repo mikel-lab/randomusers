@@ -25,8 +25,26 @@ class UserListViewModel: ObservableObject {
 		 cloudKitService: CloudKitServiceProtocol = CloudKitService()) {
 		self.userService = userService
 		self.cloudKitService = cloudKitService
+
+		// Load removed users when initializing
+		Task {
+			await loadRemovedUsers()
+			await fetchUsers() // Only fetch users after loading removed ones
+		}
 	}
 	
+	private func loadRemovedUsers() async {
+		do {
+			let removedUsers = try await cloudKitService.fetchRemovedUsers()
+			for user in removedUsers {
+				emailSet.insert(user.email)
+			}
+			print("✅ Loaded \(removedUsers.count) removed users")
+		} catch {
+			print("❌ Error loading removed users: \(error.localizedDescription)")
+		}
+	}
+
 	var filteredUsers: [UserModel] {
 		guard !searchText.isEmpty else { return allUsers }
 		return allUsers.filter { user in
@@ -38,22 +56,18 @@ class UserListViewModel: ObservableObject {
 	func fetchUsers() async {
 		guard !isFetching else { return }
 		
-		isLoading = users.isEmpty
+		isLoading = allUsers.isEmpty
 		isFetching = true
 		error = nil
 		
 		do {
 			let newUsers = try await userService.fetchUsers(page: currentPage)
 			
-			// Filter out duplicate users based on email
+			// Filter out previously removed users
 			let uniqueNewUsers = newUsers.filter { user in
 				!emailSet.contains(user.email)
 			}
 			
-			// Update email set and users array
-			uniqueNewUsers.forEach { user in
-				emailSet.insert(user.email)
-			}
 			allUsers.append(contentsOf: uniqueNewUsers)
 			users = filteredUsers
 			
@@ -84,6 +98,7 @@ class UserListViewModel: ObservableObject {
 				try await cloudKitService.saveRemovedUser(user)
 				if let index = allUsers.firstIndex(where: { $0.email == user.email }) {
 					allUsers.remove(at: index)
+					emailSet.insert(user.email)
 					users = filteredUsers
 				}
 			} catch {
