@@ -9,9 +9,19 @@ import SwiftUI
 
 @main
 struct randomusersApp: App {
-    var body: some Scene {
-        WindowGroup {
-			UserListView()
-        }
-    }
+	var body: some Scene {
+		WindowGroup {
+			TabView {
+				UserListView()
+					.tabItem {
+						Label("Users", systemImage: "person.3")
+					}
+				
+				RemovedUsersView()
+					.tabItem {
+						Label("Removed", systemImage: "trash")
+					}
+			}
+		}
+	}
 }

@@ -10,6 +10,7 @@ import Foundation
 @MainActor
 class UserListViewModel: ObservableObject {
 	@Published var users: [UserModel] = []
+	@Published var removedUsers: [UserModel] = [] 
 	@Published var isLoading = false
 	@Published var error: Error?
 	@Published var searchText = ""
@@ -84,6 +85,19 @@ class UserListViewModel: ObservableObject {
 		isLoading = false
 		isFetching = false
 	}
+	
+	func fetchRemovedUsers() async {
+			isLoading = true
+			do {
+				removedUsers = try await cloudKitService.fetchRemovedUsers()
+				for user in removedUsers {
+					emailSet.insert(user.email)
+				}
+			} catch {
+				self.error = error
+			}
+			isLoading = false
+		}
 	
 	func loadMoreIfNeeded(currentUser user: UserModel) async {
 		let thresholdIndex = users.index(users.endIndex, offsetBy: -5)
