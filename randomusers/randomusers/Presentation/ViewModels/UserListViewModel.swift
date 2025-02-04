@@ -18,7 +18,7 @@ class UserListViewModel: ObservableObject {
 	private let cloudKitService: CloudKitServiceProtocol
 	private var currentPage = 1
 	private var isFetching = false
-	private var emailSet: Set<String> = []
+	private var emailSet: Set<String> = [] // for removed users
 	private var allUsers: [UserModel] = []
 
 	init(userService: UserServiceProtocol = UserService(),
@@ -26,10 +26,10 @@ class UserListViewModel: ObservableObject {
 		self.userService = userService
 		self.cloudKitService = cloudKitService
 
-		// Load removed users when initializing
+		// load removed users when initializing
 		Task {
 			await loadRemovedUsers()
-			await fetchUsers() // Only fetch users after loading removed ones
+			await fetchUsers() // fetch users after loading removed ones
 		}
 	}
 	
@@ -63,9 +63,14 @@ class UserListViewModel: ObservableObject {
 		do {
 			let newUsers = try await userService.fetchUsers(page: currentPage)
 			
-			// Filter out previously removed users
-			let uniqueNewUsers = newUsers.filter { user in
-				!emailSet.contains(user.email)
+			// filter out removed users
+			let availableUsers = newUsers.filter { !emailSet.contains($0.email) }
+			
+			// filter out duplicates but keep one instance
+			let uniqueNewUsers = availableUsers.filter { newUser in
+				!allUsers.contains { existingUser in
+					existingUser.email == newUser.email
+				}
 			}
 			
 			allUsers.append(contentsOf: uniqueNewUsers)
