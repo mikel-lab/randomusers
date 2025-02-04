@@ -71,7 +71,7 @@ class CloudKitService: CloudKitServiceProtocol {
 		
 		var removedUsers: [UserModel] = []
 		
-		// Iteramos sobre cada resultado, que es una tupla (CKRecord.ID, Result<CKRecord, Error>)
+		//
 		for (_, result) in results {
 			switch result {
 			case .success(let record):
