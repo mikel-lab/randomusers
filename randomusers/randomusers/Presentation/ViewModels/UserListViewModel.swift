@@ -19,7 +19,7 @@ class UserListViewModel: ObservableObject {
 	let cloudKitService: CloudKitServiceProtocol
 	var currentPage = 1
 	var isFetching = false
-	var emailSet: Set<String> = [] // for removed users
+	var emailSet: Set<String> = [] //eliminated users
 	var allUsers: [UserModel] = []
 
 	init(userService: UserServiceProtocol = UserService(),
@@ -64,14 +64,22 @@ class UserListViewModel: ObservableObject {
 		do {
 			let newUsers = try await userService.fetchUsers(page: currentPage)
 			
-			// filter out removed users
+			// filter out eliminated users
 			let availableUsers = newUsers.filter { !emailSet.contains($0.email) }
 			
-			// filter out duplicates but keep one instance
+			// filter out:
+			// - duplicated on allUsers
+			// - duplicates on availableUsers
+			var seenEmails = Set<String>()
 			let uniqueNewUsers = availableUsers.filter { newUser in
-				!allUsers.contains { existingUser in
-					existingUser.email == newUser.email
+				let duplicateInAllUsers = allUsers.contains { $0.email == newUser.email }
+				let duplicateInBatch = seenEmails.contains(newUser.email)
+				
+				if !duplicateInAllUsers && !duplicateInBatch {
+					seenEmails.insert(newUser.email)
+					return true
 				}
+				return false
 			}
 			
 			allUsers.append(contentsOf: uniqueNewUsers)

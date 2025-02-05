@@ -29,7 +29,6 @@ struct UserDTO: Codable {
 	let nat: String
 }
 
-// Nested DTOs
 struct NameDTO: Codable {
 	let title: String
 	let first: String

@@ -29,7 +29,6 @@ class UserService: UserServiceProtocol {
 		do {
 			let (data, response) = try await URLSession.shared.data(from: url)
 			
-			// Print response and data for debugging
 			if let httpResponse = response as? HTTPURLResponse {
 				print("Response status code: \(httpResponse.statusCode)")
 			}

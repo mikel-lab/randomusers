@@ -36,15 +36,15 @@ class CloudKitService: CloudKitServiceProtocol {
         let plublicDatabase = CKContainer.default().publicCloudDatabase
         
         do {
-            // Get user record ID
+            // get user record ID
             let userRecordID = try await CKContainer.default().userRecordID()
             let userReference = CKRecord.Reference(recordID: userRecordID, action: .none)
             let query = CKQuery(recordType: "RemovedRandomUser", predicate: NSPredicate(format: "client == %@", userRecordID))
             
-            // Check for existing records
+            // check existing people
             let (results, _) = try await plublicDatabase.records(matching: query)
             
-            // Create new record
+            // create new person
             let record = CKRecord(recordType: "RemovedRandomUser")
             record.setValue(user.email, forKey: "email")
             record.setValue(user.name, forKey: "name")
@@ -53,7 +53,7 @@ class CloudKitService: CloudKitServiceProtocol {
             record.setValue(user.picture, forKey: "picture")
             record.setValue(userReference, forKey: "client")
             
-            // Save record
+            // save
             _ = try await plublicDatabase.save(record)
             
             print("User successfully saved to CloudKit")

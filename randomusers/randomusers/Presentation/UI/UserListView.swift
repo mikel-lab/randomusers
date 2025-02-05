@@ -18,7 +18,6 @@ struct UserListView: View {
 						.scaleEffect(1.5)
 				} else {
 					VStack {
-						// Add search bar
 						TextField("Search by name or email", text: $viewModel.searchText)
 							.textFieldStyle(RoundedBorderTextFieldStyle())
 							.padding()
