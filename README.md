@@ -1,6 +1,6 @@
 # Randomusers
 
-> **AVISO CRÍTICO:** La persistencia remota se realiza mediante **CloudKit**. Por lo tanto, el usuario debe iniciar sesión en el simulador de iPhone con una cuenta de iCloud válida, o de lo contrario la persistencia remota fallará.
+> **AVISO CRÍTICO:** La persistencia remota se realiza mediante **CloudKit**. Es imprescindible probar la aplicación en un dispositivo físico utilizando el siguiente enlace de TestFlight: [https://testflight.apple.com/join/UwP7p4e1](https://testflight.apple.com/join/UwP7p4e1), ya que CloudKit solo permite pruebas reales fuera del entorno de desarrollo mediante versiones en producción.
 
 **Desarrollado por:** Mikel Cobián
 
@@ -9,7 +9,7 @@
 ## Persistencia Remota con CloudKit
 
 > **Punto Crítico:** La persistencia remota se realiza mediante **CloudKit**.  
-> **Importante:** El usuario debe iniciar sesión en el simulador de iPhone con una cuenta de iCloud válida para asegurar el correcto funcionamiento de CloudKit.
+> **Importante:** Para realizar pruebas reales, la aplicación debe ejecutarse en un dispositivo físico mediante TestFlight usando el siguiente enlace: [https://testflight.apple.com/join/UwP7p4e1](https://testflight.apple.com/join/UwP7p4e1). Esto se debe a que CloudKit solo permite pruebas en entornos de producción.
 
 ---
 
@@ -91,3 +91,11 @@ Randomusers es una aplicación móvil (Android/iOS) que muestra información de 
   [https://randomuser.me/documentation#results](https://randomuser.me/documentation#results)
 
 ---
+
+## Instrucciones de Instalación y Ejecución
+
+1. **Clonar el repositorio:**
+
+   ```bash
+   git clone https://github.com/tu_usuario/randomusers.git
+   cd randomusers
