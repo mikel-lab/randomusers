@@ -15,12 +15,12 @@ class UserListViewModel: ObservableObject {
 	@Published var error: Error?
 	@Published var searchText = ""
 
-	private let userService: UserServiceProtocol
-	private let cloudKitService: CloudKitServiceProtocol
-	private var currentPage = 1
-	private var isFetching = false
-	private var emailSet: Set<String> = [] // for removed users
-	private var allUsers: [UserModel] = []
+	let userService: UserServiceProtocol
+	let cloudKitService: CloudKitServiceProtocol
+	var currentPage = 1
+	var isFetching = false
+	var emailSet: Set<String> = [] // for removed users
+	var allUsers: [UserModel] = []
 
 	init(userService: UserServiceProtocol = UserService(),
 		 cloudKitService: CloudKitServiceProtocol = CloudKitService()) {
